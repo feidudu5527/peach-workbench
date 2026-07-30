@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#ff9a8b">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="🍑你喜欢">
+  <title>🍑你喜欢 - 黄金蟠桃工作台</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+  <style>
+    :root {
+      --peach-50: #fff5f2;
+      --peach-100: #ffe8e2;
+      --peach-200: #ffd5cb;
+      --peach-300: #ffb7a6;
+      --peach-400: #ff9a8b;
+      --peach-500: #f97b6d;
+      --peach-600: #e05a50;
+      --peach-700: #bb423e;
+      --peach-800: #993938;
+      --peach-900: #7f3434;
+      --peach-gradient: linear-gradient(135deg, #ff9a8b 0%, #ff6a88 50%, #ff99ac 100%);
+      --soft-gradient: linear-gradient(180deg, #fff5f2 0%, #ffe8e2 100%);
+      --card-shadow: 0 4px 20px rgba(249, 123, 109, 0.12);
+      --card-shadow-hover: 0 8px 30px rgba(249, 123, 109, 0.18);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --sidebar-width: 260px;
+      --header-height: 64px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--soft-gradient);
+      color: #4a2c2a;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 布局 */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* 侧边栏 */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: linear-gradient(180deg, #fff8f6 0%, #fff0eb 100%);
+      border-right: 1px solid var(--peach-200);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 1000;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--peach-200);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: 0 3px 12px rgba(249, 123, 109, 0.25);
+      background: var(--peach-200);
+      cursor: pointer;
+    }
+
+    .brand-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--peach-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: var(--peach-700);
+      margin-top: 2px;
+    }
+
+    .nav-menu {
+      flex: 1;
+      padding: 16px 12px;
+      overflow-y: auto;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #7a4a45;
+      font-weight: 500;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      background: var(--peach-100);
+      color: var(--peach-800);
+    }
+
+    .nav-item.active {
+      background: var(--peach-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(249, 123, 109, 0.35);
+    }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .nav-badge {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--peach-500);
+      color: white;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--peach-200);
+      font-size: 12px;
+      color: var(--peach-700);
+      text-align: center;
+    }
+
+    .install-btn {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--peach-gradient);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.2s;
+    }
+
+    .install-btn.show {
+      display: flex;
+    }
+
+    .install-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* 主内容区 */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .top-bar {
+      height: var(--header-height);
+      background: rgba(255, 248, 246, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--peach-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+    }
+
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--peach-700);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--peach-900);
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: white;
+      color: var(--peach-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(249, 123, 109, 0.1);
+      transition: all 0.2s;
+      font-size: 18px;
+    }
+
+    .icon-btn:hover {
+      background: var(--peach-100);
+      transform: translateY(-2px);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    /* 遮罩 */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(74, 44, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 999;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    /* 页面内容 */
+    .page {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 通用卡片 */
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 20px;
+      border: 1px solid var(--peach-100);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--peach-900);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-desc {
+      color: #8d5e58;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    /* 统计卡片 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--peach-100);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--peach-700);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      background: var(--peach-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .stat-note {
+      font-size: 12px;
+      color: #a97a73;
+      margin-top: 4px;
+    }
+
+    /* 搜索与过滤 */
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border: 2px solid var(--peach-200);
+      border-radius: var(--radius-sm);
+      background: white;
+      font-size: 15px;
+      color: #4a2c2a;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--peach-400);
+      box-shadow: 0 0 0 4px rgba(255, 154, 139, 0.15);
+    }
+
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--peach-200);
+      background: white;
+      color: #7a4a45;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .filter-tab:hover, .filter-tab.active {
+      background: var(--peach-gradient);
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(249, 123, 109, 0.25);
+    }
+
+    /* 灵感卡片 */
+    .idea-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .idea-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--peach-100);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .idea-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--peach-gradient);
+      opacity: 0.7;
+    }
+
+    .idea-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .idea-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .idea-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--peach-900);
+      line-height: 1.4;
+      flex: 1;
+      padding-right: 10px;
+    }
+
+    .idea-platform {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--peach-100);
+      color: var(--peach-700);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .idea-section {
+      margin-top: 12px;
+    }
+
+    .idea-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--peach-700);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .idea-section-text {
+      font-size: 14px;
+      color: #5c3a36;
+      line-height: 1.7;
+    }
+
+    .idea-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 16px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--peach-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(249, 123, 109, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(249, 123, 109, 0.35);
+    }
+
+    .btn-secondary {
+      background: var(--peach-100);
+      color: var(--peach-700);
+    }
+
+    .btn-secondary:hover {
+      background: var(--peach-200);
+    }
+
+    .btn-danger {
+      background: #fff0f0;
+      color: #d64545;
+    }
+
+    .btn-danger:hover {
+      background: #ffe0e0;
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 13px;
+    }
+
+    /* 表格 */
+    .orders-table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      box-shadow: var(--card-shadow);
+      background: white;
+      margin-bottom: 20px;
+    }
+
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .orders-table th {
+      background: var(--peach-100);
+      color: var(--peach-800);
+      font-weight: 700;
+      text-align: left;
+      padding: 14px 16px;
+      white-space: nowrap;
+    }
+
+    .orders-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--peach-100);
+      color: #5c3a36;
+      vertical-align: middle;
+    }
+
+    .orders-table tr:hover td {
+      background: var(--peach-50);
+    }
+
+    .orders-table tr.completed td {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+
+    .orders-table tr.completed .price-cell {
+      text-decoration: line-through;
+    }
+
+    .checkbox-cell {
+      width: 50px;
+      text-align: center;
+    }
+
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border: 2px solid var(--peach-300);
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .custom-checkbox:hover {
+      border-color: var(--peach-500);
+    }
+
+    .custom-checkbox.checked {
+      background: var(--peach-gradient);
+      border-color: transparent;
+      color: white;
+    }
+
+    .price-cell {
+      font-weight: 700;
+      color: var(--peach-700);
+      white-space: nowrap;
+    }
+
+    .input-cell {
+      border: 1px solid transparent;
+      background: transparent;
+      padding: 6px 8px;
+      border-radius: 6px;
+      width: 100%;
+      font-size: 14px;
+      color: #5c3a36;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .input-cell:hover, .input-cell:focus {
+      background: white;
+      border-color: var(--peach-300);
+    }
+
+    .address-input {
+      min-width: 160px;
+    }
+
+    .number-input {
+      min-width: 90px;
+    }
+
+    .date-input {
+      min-width: 130px;
+    }
+
+    .delete-row-btn {
+      background: transparent;
+      border: none;
+      color: #c97a75;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .delete-row-btn:hover {
+      background: #fff0f0;
+      color: #d64545;
+    }
+
+    .add-row-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .add-row-bar input {
+      padding: 12px 14px;
+      border: 2px solid var(--peach-200);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .add-row-bar input:focus {
+      border-color: var(--peach-400);
+      box-shadow: 0 0 0 4px rgba(255, 154, 139, 0.12);
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #a97a73;
+    }
+
+    .empty-state-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--peach-800);
+      margin-bottom: 8px;
+    }
+
+    /* 表单 */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--peach-800);
+      margin-bottom: 6px;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--peach-200);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      color: #4a2c2a;
+      outline: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      border-color: var(--peach-400);
+      box-shadow: 0 0 0 4px rgba(255, 154, 139, 0.12);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 768px) {
+      :root {
+        --sidebar-width: 280px;
+      }
+
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .top-bar {
+        padding: 0 16px;
+      }
+
+      .page-title {
+        font-size: 18px;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .idea-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .stat-card {
+        padding: 16px;
+      }
+
+      .stat-value {
+        font-size: 22px;
+      }
+
+      .orders-table-wrap {
+        font-size: 13px;
+      }
+
+      .orders-table th, .orders-table td {
+        padding: 10px 12px;
+      }
+
+      .add-row-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .add-row-bar input, .add-row-bar button {
+        width: 100%;
+      }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(74, 44, 42, 0.92);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 500;
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* 更新时间 */
+    .update-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: var(--peach-100);
+      border-radius: var(--radius-sm);
+      color: var(--peach-800);
+      font-size: 13px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .update-info .dot {
+      width: 8px;
+      height: 8px;
+      background: #5cb85c;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(92, 184, 92, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(92, 184, 92, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(92, 184, 92, 0); }
+    }
+
+    /* 拖拽排序 */
+    .sortable-ghost {
+      opacity: 0.4;
+      background: var(--peach-100);
+    }
+
+    /* 隐藏文件输入 */
+    #file-import {
+      display: none;
+    }
+
+    /* 加载动画 */
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 3px solid var(--peach-200);
+      border-top-color: var(--peach-500);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 标签 */
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+
+    .tag-peach {
+      background: var(--peach-100);
+      color: var(--peach-700);
+    }
+
+    /* 滚动条美化 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--peach-50);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--peach-300);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--peach-400);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- 侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/avatar.jpg" alt="头像" class="avatar" id="userAvatar" onerror="this.src='icons/icon-192.png'">
+        <div class="brand-info">
+          <div class="brand-title">🍑你喜欢</div>
+          <div class="brand-subtitle">黄金蟠桃工作台</div>
+        </div>
+      </div>
+      <nav class="nav-menu">
+        <div class="nav-item active" data-page="ideas">
+          <span class="nav-icon">✨</span>
+          <span>爆款灵感</span>
+          <span class="nav-badge" id="ideasBadge">10</span>
+        </div>
+        <div class="nav-item" data-page="materials">
+          <span class="nav-icon">🎬</span>
+          <span>二创素材</span>
+          <span class="nav-badge" id="materialsBadge">10</span>
+        </div>
+        <div class="nav-item" data-page="orders">
+          <span class="nav-icon">📦</span>
+          <span>接单发货</span>
+          <span class="nav-badge" id="ordersBadge">0</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="install-btn" id="installBtn">📲 添加到桌面</button>
+        <div>🍑 让每一颗蟠桃都有好故事</div>
+      </div>
+    </aside>
+
+    <!-- 遮罩 -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+      <header class="top-bar">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <h1 class="page-title" id="pageTitle">爆款灵感</h1>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" id="importBtn" title="导入数据">📥</button>
+          <button class="icon-btn" id="exportBtn" title="导出数据">📤</button>
+          <input type="file" id="file-import" accept=".json">
+        </div>
+      </header>
+
+      <div class="content-area">
+        <!-- 页面1：爆款灵感 -->
+        <section class="page active" id="page-ideas">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">今日灵感</div>
+              <div class="stat-value" id="todayIdeasCount">0</div>
+              <div class="stat-note">条精选爆款脚本</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">覆盖平台</div>
+              <div class="stat-value" id="platformCount">4</div>
+              <div class="stat-note">抖音/小红书/快手/B站</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">已收藏</div>
+              <div class="stat-value" id="favIdeasCount">0</div>
+              <div class="stat-note">条常用灵感</div>
+            </div>
+          </div>
+
+          <div class="search-box">
+            <input type="text" id="ideasSearch" placeholder="搜索灵感标题、脚本关键词、平台...">
+          </div>
+
+          <div class="filter-tabs" id="ideasFilter">
+            <button class="filter-tab active" data-filter="all">全部</button>
+            <button class="filter-tab" data-filter="抖音">抖音</button>
+            <button class="filter-tab" data-filter="小红书">小红书</button>
+            <button class="filter-tab" data-filter="快手">快手</button>
+            <button class="filter-tab" data-filter="B站">B站</button>
+          </div>
+
+          <div class="update-info">
+            <span class="dot"></span>
+            <span>灵感库每日自动更新，每天早上8点为你推荐新的爆款方向</span>
+          </div>
+
+          <div class="idea-grid" id="ideasGrid"></div>
+        </section>
+
+        <!-- 页面2：二创素材 -->
+        <section class="page" id="page-materials">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">可用素材</div>
+              <div class="stat-value" id="materialCount">0</div>
+              <div class="stat-note">个可二创来源</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">免费商用</div>
+              <div class="stat-value" id="freeCount">0</div>
+              <div class="stat-note">个CC0/免费平台</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">今日更新</div>
+              <div class="stat-value" id="todayUpdate">✓</div>
+              <div class="stat-note">每日8点更新</div>
+            </div>
+          </div>
+
+          <div class="search-box">
+            <input type="text" id="materialsSearch" placeholder="搜索素材网站、类型、二创建议...">
+          </div>
+
+          <div class="filter-tabs" id="materialsFilter">
+            <button class="filter-tab active" data-filter="all">全部</button>
+            <button class="filter-tab" data-filter="实拍视频">实拍视频</button>
+            <button class="filter-tab" data-filter="模板">模板</button>
+            <button class="filter-tab" data-filter="免费">免费商用</button>
+          </div>
+
+          <div class="update-info">
+            <span class="dot"></span>
+            <span>每天早上8点推送新的可二创视频素材与平台推荐</span>
+          </div>
+
+          <div class="idea-grid" id="materialsGrid"></div>
+        </section>
+
+        <!-- 页面3：接单发货 -->
+        <section class="page" id="page-orders">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">今日卖出</div>
+              <div class="stat-value" id="todayRevenue">¥0</div>
+              <div class="stat-note">今日累计销售金额</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">今日成本</div>
+              <div class="stat-value" id="todayCost">¥0</div>
+              <div class="stat-note">今日累计成本金额</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">今日利润</div>
+              <div class="stat-value" id="todayProfit">¥0</div>
+              <div class="stat-note">今日净利润</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">未完成</div>
+              <div class="stat-value" id="pendingCount">0</div>
+              <div class="stat-note">待发货订单</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📝 添加新订单</div>
+            <div class="card-desc">输入地址、卖出金额、成本金额，系统会自动按天汇总统计</div>
+            <div class="add-row-bar">
+              <input type="date" id="newOrderDate" class="date-input">
+              <input type="text" id="newOrderAddress" placeholder="收货地址 / 客户信息" style="flex:1;min-width:140px;">
+              <input type="number" id="newOrderAmount" placeholder="卖出金额" class="number-input" min="0" step="0.01">
+              <input type="number" id="newOrderCost" placeholder="成本金额" class="number-input" min="0" step="0.01">
+              <button class="btn btn-primary" id="addOrderBtn">➕ 添加订单</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">📋 订单记录</div>
+            <div class="card-desc">勾选代表已发货，自动从今日待办中移除；每天独立累计</div>
+            <div class="orders-table-wrap">
+              <table class="orders-table">
+                <thead>
+                  <tr>
+                    <th class="checkbox-cell">发货</th>
+                    <th>日期</th>
+                    <th>地址 / 客户</th>
+                    <th>卖出金额</th>
+                    <th>成本金额</th>
+                    <th>利润</th>
+                    <th style="width:50px;"></th>
+                  </tr>
+                </thead>
+                <tbody id="ordersBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="ordersEmpty" style="display:none;">
+              <div class="empty-state-icon">📦</div>
+              <div class="empty-state-title">还没有订单</div>
+              <div>添加第一笔接单发货记录，开始赚钱吧 🍑</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ==================== 默认数据 ====================
+    const DEFAULT_IDEAS = [
+      {
+        "title": "一刀切开，汁水直接喷出来！这颗黄金蟠桃也太离谱了",
+        "platform": "抖音",
+        "script": "家人们，今天这颗桃子我必须让你们看看！你们见过切一刀就爆汁的桃子吗？来，镜头怼近一点——看好了啊，一刀下去，汁水直接顺着刀往下淌！这不是普通桃子，这是山东蒙阴的黄金蟠桃，糖度能到18以上！硬吃嘎嘣脆甜，软吃一口爆汁，核小得跟指甲盖似的，整颗桃子98%都是肉！每年就卖二十来天，吃完这季等一年。左下角已经上了，手慢真没了！",
+        "shooting": "特写镜头：手掌托着一颗金黄色的扁圆蟠桃，阳光下果皮泛着光泽。用刀从中间切开，慢动作捕捉汁水喷溅的瞬间，镜头跟随汁水滴落。最后切面特写，展示果肉金黄细腻、果核极小。",
+        "analysis": "爆汁画面天然具备视觉冲击力，慢动作+特写极大提升完播率和互动欲，用户会忍不住看完并转发。"
+      },
+      {
+        "title": "王母娘娘的蟠桃会，今天我也吃上了！",
+        "platform": "小红书",
+        "script": "姐妹们谁懂啊！从小看西游记就馋王母娘娘的蟠桃，今天终于吃到真的了！就是这个黄金蟠桃，扁扁圆圆像个小太阳，金灿灿的颜值真的绝了！咬一口——哇，那个汁水直接往嘴里灌，又甜又香，完全不是超市那种寡淡的桃子能比的。关键是它一桃两吃，刚收到是脆甜的，放两天变软糯爆汁，一颗桃子两种快乐。果期就剩半个月了，再不下手真要等明年了！",
+        "shooting": "开箱+试吃vlog风格：快递箱拆封，取出带泡沫保护的蟠桃。自然光下展示蟠桃的扁圆造型和金黄油亮的果皮。对半掰开（软桃），展示拉丝的果肉和流淌的汁水，最后一口咬下的满足表情特写。",
+        "analysis": "西游记IP自带流量和童年回忆，容易引发共鸣；小红书用户偏爱高颜值食物展示+真实试吃体验，种草转化率高。"
+      },
+      {
+        "title": "水果店老板不会告诉你的蟠桃秘密，我全抖出来了",
+        "platform": "快手",
+        "script": "老铁们，今天跟你们聊个实在的。为啥你在水果店买的蟠桃不甜？因为市面上好多都是提前摘的，放熟的跟树上熟的完全两个东西！咱们家的黄金蟠桃，山东蒙阴核心产区，每一颗都是挂树自然熟，凌晨摘、当天发。你看这个颜色，金灿灿的，不是那种青白青白的。你收到货先挑软的吃，一口下去甜到嗓子眼，汁水多到得用碗接着！这种品质你在水果店花两倍价钱都买不到！",
+        "shooting": "果园实拍+对比展示：清晨果园中果农采摘，展示挂满枝头的金黄蟠桃。将一颗树上熟的黄金蟠桃与一颗市面上常见的普通蟠桃并排对比，从颜色、果形、切面汁水三个维度做对比。最后展示打包发货的实景，强化产地直发信任感。",
+        "analysis": "揭露行业内幕的'揭秘'类内容天然吸引点击，产地实拍增加可信度，快手用户对老铁式真诚带货接受度高。"
+      },
+      {
+        "title": "我吃了20年桃子，这颗黄金蟠桃直接封神了",
+        "platform": "B站",
+        "script": "作为一个吃了二十年桃子的资深桃控，今天我必须给这颗黄金蟠桃一个排面！我先说结论——它是我今年吃过最好吃的桃子，没有之一。你看它的外形，扁扁的像个飞碟，通体金黄带一层绒毛。最绝的是它的口感，硬吃的时候是那种咔嚓脆的，桃香特别浓；放软之后直接变成水蜜桃的口感，皮一撕就下来，果肉嫩得像冰淇淋一样。关键是它的甜不是那种齁甜，是带着桃香的清甜。一颗下去，嘴里的桃味能留半小时！",
+        "shooting": "测评风格：开头展示一排不同品种的桃子，逐一品尝打分。轮到黄金蟠桃时，分两个阶段展示——第一天脆吃（切块特写+咀嚼音），第三天软吃（撕皮+吸汁）。结尾展示评分板，黄金蟠桃各项满分，配合字幕特效强化视觉冲击。",
+        "analysis": "B站用户偏爱深度测评内容，'吃过XX年'的人设建立权威感，分阶段试吃展示产品差异化卖点，说服力强。"
+      },
+      {
+        "title": "99%的人没见过树上熟的黄金蟠桃长啥样",
+        "platform": "抖音",
+        "script": "你们平时在超市见到的蟠桃是不是又硬又青？来，今天带你们看看真正的树上熟黄金蟠桃长什么样！看这一树的桃子，金灿灿的跟小灯笼一样挂在枝头。摘一颗下来，都不用洗，用手蹭蹭就能吃。你听这个声音——咔嚓！脆甜脆甜的，汁水直接顺着手腕往下淌。这是山东蒙阴的老果园，施的都是农家肥，每一颗都是自然熟。超市里根本买不到这个品质，今天果园直发，从树上到你手上不超过48小时！",
+        "shooting": "果园沉浸式vlog：清晨阳光穿过桃林，镜头缓缓推进一棵挂满金黄色蟠桃的果树。果农伸手摘下一颗，在衣服上擦一擦，直接咬一大口，汁水溢出嘴角，收音清晰的咀嚼脆响。最后全景展示整片果园，配上产地信息字幕。",
+        "analysis": "源头溯源类内容是农产品带货的王牌，'树上熟'的视觉冲击+采摘到品尝的完整链条，让用户产生强烈的购买冲动。"
+      },
+      {
+        "title": "减脂期也能放心吃的水果！这颗蟠桃甜到犯规还不长胖",
+        "platform": "小红书",
+        "script": "减脂期的姐妹看过来！想吃甜的又怕胖？这颗黄金蟠桃你必须知道！一颗的热量比半个苹果还低，但甜度能秒杀大多数水果。关键是它富含膳食纤维和铁元素，吃它不仅能解馋，还能补血养颜。我最爱的吃法是冰箱里冰镇两小时，拿出来冰冰凉凉的，咬一口那个汁水直接在嘴里炸开，比喝奶茶还爽，关键是一点负罪感都没有！夏天代餐水果的天花板就是它了，姐妹们赶紧冲！",
+        "shooting": "清新ins风：白色背景前摆放几颗黄金蟠桃，搭配薄荷叶点缀。展示冰箱取出冰镇蟠桃的特写，水珠凝结在金黄果皮上。切开后用手挤出汁水滴入透明玻璃杯，最后呈现一杯自制蟠桃果饮，整体画面干净治愈。",
+        "analysis": "绑定'减脂'场景精准切入女性用户痛点，热量对比增强说服力，颜值化的画面呈现符合小红书审美，易引发收藏和种草。"
+      },
+      {
+        "title": "这个蟠桃，硬吃脆甜软吃爆汁，我直接回购了三箱",
+        "platform": "快手",
+        "script": "兄弟们姐妹们，这个黄金蟠桃我必须给你们按头安利！第一箱寄到家我老婆还说我乱花钱，结果她吃了第一口就不说话了——默默又去下了两箱！你看这个蟠桃，金灿灿圆扁扁的，颜值就赢了。第一天收到硬着吃，脆甜爽口，桃味特别正。放了两天变软了，皮一扒就下来，里面的果肉嫩得跟豆腐似的，汁水多到必须低头吃，不然滴一身！关键是核小得离谱，一个桃子吃下去全是肉，太过瘾了！39块9一箱，趁现在还有货赶紧囤！",
+        "shooting": "家庭场景+真实反应：快递到家拆箱，老婆嫌弃的表情开场。切桃子时老婆凑过来尝了一口，表情瞬间变化——瞪大眼睛、竖起大拇指。分两天拍摄：第一天展示脆桃切面+咀嚼音，第三天展示软桃撕皮+爆汁，最后展示手机上的复购订单截图。",
+        "analysis": "反转剧情（从嫌弃到真香）制造情绪张力，家庭场景增加真实感，复购截图的社交证明强化购买信心。"
+      },
+      {
+        "title": "送长辈不知道送什么？这颗'长寿果'比保健品实在多了",
+        "platform": "抖音",
+        "script": "很多粉丝问我，夏天给爸妈送什么好？我跟你们说，送保健品不如送一箱黄金蟠桃！蟠桃自古以来就是'长寿果'，古书上说它补血活血、清热养颜。关键是好吃啊，老人小孩都爱！你看这个果肉多细腻，牙口不好的老人也能吃。而且咱们家每一颗都是人工套袋种植的，不打农药，清水冲冲就能直接吃。一箱才几十块钱，比你在药店买一堆保健品实在多了。给长辈送健康，这个蟠桃必须安排上！",
+        "shooting": "温情风格：一位老人坐在院子里，面前摆着一盘金黄蟠桃，拿起一颗咬下，露出满足的笑容。穿插果园套袋、手工采摘的画面。最后展示精美的礼盒包装，配上'送长辈送健康'的文案字幕。",
+        "analysis": "绑定'送礼'场景拓展消费人群，引用传统文化中'长寿果'概念增加产品价值感，温情感画面引发孝心共鸣。"
+      },
+      {
+        "title": "水果杀手实测：超市VS果园，黄金蟠桃差距有多大？",
+        "platform": "B站",
+        "script": "大家好我是水果杀手，今天做一个硬核对比——左边是某生鲜平台买的黄金蟠桃，花了68块；右边是我们直接从山东蒙阴果园直发的，一箱不到40。咱们从外观、甜度、汁水、果核大小四个维度来PK。先用糖度计测——超市的12.5度，果园直发的18.2度，差了将近6度！再切开看，超市的果肉发白、汁水少，果园的这个金灿灿的，刀一碰就冒汁。最后看核，左边这个核占了快一半，右边这个核小得跟硬币似的。结论不用我说了吧？同样叫黄金蟠桃，品质差太多了！",
+        "shooting": "硬核测评风：白色桌面上并排摆放两种蟠桃，标注来源和价格。使用专业工具（糖度计、电子秤、游标卡尺）逐一测量并展示数据。切面对比时使用微距镜头，突出颜色和汁水的差异。最后汇总数据表格，给出结论。",
+        "analysis": "硬核对比测评满足用户'怕踩坑'心理，数据化呈现极具说服力，B站用户对这类理性分析内容完播率高、转发意愿强。"
+      },
+      {
+        "title": "夏天的第一口蟠桃，必须这样吃才过瘾！",
+        "platform": "小红书",
+        "script": "桃子脑袋集合！黄金蟠桃的最佳吃法我给你们整理好了！第一种：冰镇直接啃，冰箱冷藏两小时，冰冰凉凉咬一口，汁水在嘴里炸开，比吃冰淇淋还爽。第二种：切块拌酸奶，蟠桃的甜加上酸奶的酸，绝配！第三种：蟠桃气泡水，果肉捣碎加冰块加苏打水，夏天喝这个比奶茶香一百倍。关键是这个蟠桃本身甜度就很高，根本不用加糖，纯天然的健康快乐水！现在正是黄金蟠桃最好吃的时候，姐妹们囤起来慢慢解锁各种吃法！",
+        "shooting": "美食教程风格：快速剪辑三种吃法的制作过程。冰镇蟠桃从冰箱取出的特写（雾气+水珠）。酸奶拌蟠桃的搅拌画面。蟠桃气泡水的气泡升腾慢镜头。每种吃法配上品尝后的满足表情，整体节奏轻快有食欲。",
+        "analysis": "场景化吃法教程增加内容的实用性和收藏价值，多种吃法延长了产品的使用想象，降低用户的决策成本。"
+      }
+    ];
+
+    const DEFAULT_MATERIALS = [
+      {
+        "title": "Pixabay - 桃子果园实拍素材合集",
+        "platform": "Pixabay",
+        "type": "实拍视频",
+        "suggestion": "搜索 peach orchard / peach fruit / fruit harvest 可找到大量4K高清桃子采摘、果园风光素材。截取桃子特写、采摘过程、果园全景镜头，叠加黄金蟠桃产品图和价格信息，配合口播介绍蟠桃的产地优势和甜度卖点。",
+        "source": "https://pixabay.com/videos/search/peach%20orchard/"
+      },
+      {
+        "title": "Pexels - 水果美食场景视频素材",
+        "platform": "Pexels",
+        "type": "实拍视频",
+        "suggestion": "搜索 fruit / farm / orchard / fresh produce 获取高质量水果特写、农场劳作、新鲜农产品展示视频。适合作为带货视频的B-roll背景画面，配合'现摘现发''产地直供'等文案，增强用户对黄金蟠桃新鲜度的信任感。",
+        "source": "https://www.pexels.com/search/videos/fruit/"
+      },
+      {
+        "title": "Mixkit - 美食烹饪与水果展示素材",
+        "platform": "Mixkit",
+        "type": "实拍视频",
+        "suggestion": "Mixkit由Envato团队维护，视频质量高。搜索 fruit / food / fresh 可获得水果摆放、切开、摆盘等精美镜头。可将这些素材与蟠桃产品实拍混剪，制作'黄金蟠桃的N种吃法''蟠桃甜品制作'等创意带货内容。",
+        "source": "https://mixkit.co/free-stock-video/"
+      },
+      {
+        "title": "Coverr - 自然田园风光航拍素材",
+        "platform": "Coverr",
+        "type": "实拍视频",
+        "suggestion": "Coverr提供大量自然风光、田园农场类航拍镜头，画质精美。搜索 farm / orchard / harvest 获取果园航拍和丰收场景，用于视频开场或转场，营造'原产地好果子'的视觉氛围，搭配产地故事提升用户购买欲望。",
+        "source": "https://coverr.co/"
+      },
+      {
+        "title": "Videvo - 农业果园实拍素材库",
+        "platform": "Videvo",
+        "type": "实拍视频",
+        "suggestion": "Videvo有专门的农业和果园类视频分类，包含果农劳作、果树挂果、采摘收获等真实场景。搜索 fruit orchard / farmer harvest 获取素材，混剪制作'从枝头到餐桌'的全流程展示视频，突出黄金蟠桃的天然无公害特点。",
+        "source": "https://www.videvo.net/"
+      },
+      {
+        "title": "Vecteezy - 桃子特写与水果高清素材",
+        "platform": "Vecteezy",
+        "type": "实拍视频",
+        "suggestion": "搜索 peach 可找到3500+桃子相关免费视频，包括桃子特写、水珠桃子、切开桃子等诱人镜头。下载高清桃子特写素材，叠加黄金蟠桃实物对比，制作'普通桃子vs黄金蟠桃'对比类带货视频，直观展示产品优势。",
+        "source": "https://www.vecteezy.com/free-videos/peach"
+      },
+      {
+        "title": "光厂(VJ师) - 蟠桃专题视频素材",
+        "platform": "光厂/VJ师",
+        "type": "模板",
+        "suggestion": "光厂是国内最大的视频素材交易平台之一，直接搜索'蟠桃'有专门的蟠桃视频素材分类。包含4K实拍、AE模板、C4D模型等多种类型。可下载蟠桃展示模板，替换为自家黄金蟠桃产品图和文案，快速制作专业级带货短视频。",
+        "source": "https://www.vjshi.com/so/171483.html"
+      },
+      {
+        "title": "摄图网 - 蟠桃水果视频模板",
+        "platform": "摄图网",
+        "type": "模板",
+        "suggestion": "摄图网提供高清蟠桃视频素材和视频模板，直接搜索'蟠桃'可获取相关素材。下载桃子相关视频模板后，替换产品图和文案信息，快速制作蟠桃带货短视频。适合没有剪辑基础的新手商家使用，模板化操作效率高。",
+        "source": "https://699pic.com/media/video-267538.html"
+      },
+      {
+        "title": "抖音精选联盟 - 带货二创素材库",
+        "platform": "抖音电商",
+        "type": "模板",
+        "suggestion": "抖音电商官方提供'带货二创素材库'，商家入驻后可获取平台提供的视频素材模板和剪辑工具。在抖音搜索'带货二创素材库'进入专题页，可找到水果生鲜类带货视频模板，直接套用模板上传黄金蟠桃产品素材即可生成合规带货视频。",
+        "source": "https://www.douyin.com/zhuanti/7247652904327448610"
+      },
+      {
+        "title": "包图网 - 蟠桃农产品商用视频",
+        "platform": "包图网",
+        "type": "模板",
+        "suggestion": "包图网提供原创可商用的蟠桃视频素材，涵盖农产品展示、水果特写、丰收场景等多种类型。搜索'蟠桃''水果'获取素材，配合黄金蟠桃的产品卖点（如'甜度高''果肉细腻''产地直发'），制作信息流投放视频或直播间背景视频。",
+        "source": "https://ibaotu.com/s-shipin/10361075.html"
+      }
+    ];
+
+    // ==================== 数据层 ====================
+    const STORAGE_KEY = 'peachWorkbenchData_v1';
+
+    function getTodayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function loadData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            ideas: parsed.ideas || DEFAULT_IDEAS,
+            materials: parsed.materials || DEFAULT_MATERIALS,
+            orders: parsed.orders || [],
+            favIdeas: parsed.favIdeas || [],
+            lastUpdate: parsed.lastUpdate || getTodayStr()
+          };
+        }
+      } catch (e) {
+        console.error('loadData error', e);
+      }
+      return {
+        ideas: DEFAULT_IDEAS,
+        materials: DEFAULT_MATERIALS,
+        orders: [],
+        favIdeas: [],
+        lastUpdate: getTodayStr()
+      };
+    }
+
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    let appData = loadData();
+
+    // 每天早上8点更新检测：如果日期变了，就刷新更新时间
+    function checkDailyUpdate() {
+      const today = getTodayStr();
+      if (appData.lastUpdate !== today) {
+        appData.lastUpdate = today;
+        // 可以在这里添加每天新素材推送逻辑
+        saveData(appData);
+      }
+    }
+    checkDailyUpdate();
+
+    // ==================== UI 状态 ====================
+    let currentPage = 'ideas';
+    let ideasFilter = 'all';
+    let materialsFilter = 'all';
+    let ideasSearch = '';
+    let materialsSearch = '';
+
+    // ==================== 工具函数 ====================
+    function toast(message) {
+      const el = document.getElementById('toast');
+      el.textContent = message;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    function formatMoney(n) {
+      const num = parseFloat(n) || 0;
+      return '¥' + num.toFixed(2);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // ==================== 页面切换 ====================
+    const pageTitles = {
+      ideas: '爆款灵感',
+      materials: '二创素材',
+      orders: '接单发货'
+    };
+
+    function switchPage(page) {
+      currentPage = page;
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.toggle('active', el.dataset.page === page));
+      document.querySelectorAll('.page').forEach(el => el.classList.toggle('active', el.id === 'page-' + page));
+      document.getElementById('pageTitle').textContent = pageTitles[page];
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (page === 'orders') renderOrders();
+    }
+
+    document.querySelectorAll('.nav-item').forEach(el => {
+      el.addEventListener('click', () => switchPage(el.dataset.page));
+    });
+
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('show');
+    });
+
+    document.getElementById('overlay').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+    });
+
+    // ==================== 模块1：爆款灵感 ====================
+    function renderIdeas() {
+      let list = appData.ideas;
+      if (ideasFilter !== 'all') {
+        list = list.filter(item => item.platform === ideasFilter);
+      }
+      if (ideasSearch.trim()) {
+        const kw = ideasSearch.toLowerCase();
+        list = list.filter(item =>
+          item.title.toLowerCase().includes(kw) ||
+          item.script.toLowerCase().includes(kw) ||
+          item.platform.toLowerCase().includes(kw) ||
+          item.shooting.toLowerCase().includes(kw)
+        );
+      }
+
+      document.getElementById('todayIdeasCount').textContent = appData.ideas.length;
+      document.getElementById('favIdeasCount').textContent = appData.favIdeas.length;
+      document.getElementById('ideasBadge').textContent = appData.ideas.length;
+
+      const grid = document.getElementById('ideasGrid');
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-state-icon">✨</div>
+            <div class="empty-state-title">没有找到相关灵感</div>
+            <div>换个关键词或平台试试 🍑</div>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map((item, idx) => {
+        const globalIdx = appData.ideas.indexOf(item);
+        const isFav = appData.favIdeas.includes(item.title);
+        return `
+        <article class="idea-card">
+          <div class="idea-header">
+            <h3 class="idea-title">${escapeHtml(item.title)}</h3>
+            <span class="idea-platform">${escapeHtml(item.platform)}</span>
+          </div>
+          <div class="idea-section">
+            <div class="idea-section-title">📝 爆款脚本</div>
+            <p class="idea-section-text">${escapeHtml(item.script)}</p>
+          </div>
+          <div class="idea-section">
+            <div class="idea-section-title">🎥 拍摄思路</div>
+            <p class="idea-section-text">${escapeHtml(item.shooting)}</p>
+          </div>
+          <div class="idea-section">
+            <div class="idea-section-title">💡 爆款要点</div>
+            <p class="idea-section-text">${escapeHtml(item.analysis)}</p>
+          </div>
+          <div class="idea-actions">
+            <button class="btn btn-primary btn-sm" onclick="copyIdeaScript(${globalIdx})">📋 复制脚本</button>
+            <button class="btn btn-secondary btn-sm" onclick="toggleFavIdea(${globalIdx})">${isFav ? '❤️ 已收藏' : '🤍 收藏'}</button>
+          </div>
+        </article>
+      `}).join('');
+    }
+
+    window.copyIdeaScript = function(idx) {
+      const text = appData.ideas[idx].script;
+      navigator.clipboard.writeText(text).then(() => toast('脚本已复制到剪贴板'));
+    };
+
+    window.toggleFavIdea = function(idx) {
+      const title = appData.ideas[idx].title;
+      const pos = appData.favIdeas.indexOf(title);
+      if (pos >= 0) {
+        appData.favIdeas.splice(pos, 1);
+        toast('已取消收藏');
+      } else {
+        appData.favIdeas.push(title);
+        toast('已收藏到常用灵感');
+      }
+      saveData(appData);
+      renderIdeas();
+    };
+
+    document.getElementById('ideasSearch').addEventListener('input', (e) => {
+      ideasSearch = e.target.value;
+      renderIdeas();
+    });
+
+    document.querySelectorAll('#ideasFilter .filter-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#ideasFilter .filter-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        ideasFilter = btn.dataset.filter;
+        renderIdeas();
+      });
+    });
+
+    // ==================== 模块2：二创素材 ====================
+    function renderMaterials() {
+      let list = appData.materials;
+      if (materialsFilter === '免费') {
+        list = list.filter(item => /免费|CC0|Pexels|Pixabay|Mixkit|Coverr|Videvo|Vecteezy/.test(item.suggestion + item.source));
+      } else if (materialsFilter !== 'all') {
+        list = list.filter(item => item.type && item.type.includes(materialsFilter));
+      }
+      if (materialsSearch.trim()) {
+        const kw = materialsSearch.toLowerCase();
+        list = list.filter(item =>
+          item.title.toLowerCase().includes(kw) ||
+          item.platform.toLowerCase().includes(kw) ||
+          item.type.toLowerCase().includes(kw) ||
+          item.suggestion.toLowerCase().includes(kw)
+        );
+      }
+
+      document.getElementById('materialCount').textContent = appData.materials.length;
+      document.getElementById('materialsBadge').textContent = appData.materials.length;
+      const freeCount = appData.materials.filter(item => /免费|CC0|Pexels|Pixabay|Mixkit|Coverr|Videvo|Vecteezy/.test(item.suggestion + item.source)).length;
+      document.getElementById('freeCount').textContent = freeCount;
+
+      const grid = document.getElementById('materialsGrid');
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state" style="grid-column:1/-1;">
+            <div class="empty-state-icon">🎬</div>
+            <div class="empty-state-title">没有找到相关素材</div>
+            <div>换个关键词或类型试试 🍑</div>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map(item => `
+        <article class="idea-card">
+          <div class="idea-header">
+            <h3 class="idea-title">${escapeHtml(item.title)}</h3>
+            <span class="idea-platform">${escapeHtml(item.platform)}</span>
+          </div>
+          <div style="margin-bottom:12px;">
+            <span class="tag tag-peach">${escapeHtml(item.type)}</span>
+          </div>
+          <div class="idea-section">
+            <div class="idea-section-title">💡 二创建议</div>
+            <p class="idea-section-text">${escapeHtml(item.suggestion)}</p>
+          </div>
+          <div class="idea-section">
+            <div class="idea-section-title">🔗 来源链接</div>
+            <p class="idea-section-text" style="word-break:break-all;">
+              <a href="${escapeHtml(item.source)}" target="_blank" rel="noopener" style="color:var(--peach-600);text-decoration:underline;">${escapeHtml(item.source)}</a>
+            </p>
+          </div>
+          <div class="idea-actions">
+            <button class="btn btn-primary btn-sm" onclick="window.open('${escapeHtml(item.source)}', '_blank')">🚀 打开素材</button>
+            <button class="btn btn-secondary btn-sm" onclick="copyText('${escapeHtml(item.source)}')">📋 复制链接</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    window.copyText = function(text) {
+      navigator.clipboard.writeText(text).then(() => toast('链接已复制'));
+    };
+
+    document.getElementById('materialsSearch').addEventListener('input', (e) => {
+      materialsSearch = e.target.value;
+      renderMaterials();
+    });
+
+    document.querySelectorAll('#materialsFilter .filter-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#materialsFilter .filter-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        materialsFilter = btn.dataset.filter;
+        renderMaterials();
+      });
+    });
+
+    // ==================== 模块3：接单发货 ====================
+    function calcOrderProfit(order) {
+      return (parseFloat(order.amount) || 0) - (parseFloat(order.cost) || 0);
+    }
+
+    function getTodayOrders() {
+      const today = getTodayStr();
+      return appData.orders.filter(o => o.date === today && !o.completed);
+    }
+
+    function renderOrders() {
+      const today = getTodayStr();
+      const todayOrders = appData.orders.filter(o => o.date === today);
+      const todayRevenue = todayOrders.reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
+      const todayCost = todayOrders.reduce((sum, o) => sum + (parseFloat(o.cost) || 0), 0);
+      const todayProfit = todayRevenue - todayCost;
+      const pending = appData.orders.filter(o => !o.completed).length;
+
+      document.getElementById('todayRevenue').textContent = formatMoney(todayRevenue);
+      document.getElementById('todayCost').textContent = formatMoney(todayCost);
+      document.getElementById('todayProfit').textContent = formatMoney(todayProfit);
+      document.getElementById('pendingCount').textContent = pending;
+      document.getElementById('ordersBadge').textContent = pending;
+
+      const tbody = document.getElementById('ordersBody');
+      const emptyEl = document.getElementById('ordersEmpty');
+
+      // 按日期倒序，未完成的在前面
+      const sorted = [...appData.orders].sort((a, b) => {
+        if (a.completed !== b.completed) return a.completed ? 1 : -1;
+        return b.date.localeCompare(a.date);
+      });
+
+      if (sorted.length === 0) {
+        tbody.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      tbody.innerHTML = sorted.map((order, idx) => {
+        const originalIdx = appData.orders.indexOf(order);
+        const profit = calcOrderProfit(order);
+        return `
+        <tr class="${order.completed ? 'completed' : ''}" data-idx="${originalIdx}">
+          <td class="checkbox-cell">
+            <span class="custom-checkbox ${order.completed ? 'checked' : ''}" onclick="toggleOrderComplete(${originalIdx})">
+              ${order.completed ? '✓' : ''}
+            </span>
+          </td>
+          <td><input type="date" class="input-cell date-input" value="${order.date}" onchange="updateOrder(${originalIdx}, 'date', this.value)"></td>
+          <td><input type="text" class="input-cell address-input" value="${escapeHtml(order.address || '')}" placeholder="地址/客户" onchange="updateOrder(${originalIdx}, 'address', this.value)"></td>
+          <td><input type="number" class="input-cell number-input price-cell" value="${order.amount}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'amount', this.value)"></td>
+          <td><input type="number" class="input-cell number-input" value="${order.cost}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'cost', this.value)"></td>
+          <td class="price-cell">${formatMoney(profit)}</td>
+          <td><button class="delete-row-btn" onclick="deleteOrder(${originalIdx})" title="删除">🗑</button></td>
+        </tr>
+      `;
+      }).join('');
+    }
+
+    window.toggleOrderComplete = function(idx) {
+      appData.orders[idx].completed = !appData.orders[idx].completed;
+      saveData(appData);
+      renderOrders();
+      toast(appData.orders[idx].completed ? '已标记为已发货' : '已恢复为待发货');
+    };
+
+    window.updateOrder = function(idx, field, value) {
+      appData.orders[idx][field] = value;
+      saveData(appData);
+      renderOrders();
+    };
+
+    window.deleteOrder = function(idx) {
+      if (!confirm('确定删除这条订单记录吗？')) return;
+      appData.orders.splice(idx, 1);
+      saveData(appData);
+      renderOrders();
+      toast('订单已删除');
+    };
+
+    function addOrder() {
+      const date = document.getElementById('newOrderDate').value || getTodayStr();
+      const address = document.getElementById('newOrderAddress').value.trim();
+      const amount = parseFloat(document.getElementById('newOrderAmount').value) || 0;
+      const cost = parseFloat(document.getElementById('newOrderCost').value) || 0;
+
+      if (!address) {
+        toast('请先填写地址或客户信息');
+        return;
+      }
+
+      appData.orders.unshift({
+        id: Date.now(),
+        date,
+        address,
+        amount,
+        cost,
+        completed: false,
+        createdAt: new Date().toISOString()
+      });
+      saveData(appData);
+
+      document.getElementById('newOrderAddress').value = '';
+      document.getElementById('newOrderAmount').value = '';
+      document.getElementById('newOrderCost').value = '';
+      renderOrders();
+      toast('订单添加成功');
+    }
+
+    document.getElementById('addOrderBtn').addEventListener('click', addOrder);
+    document.getElementById('newOrderAddress').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
+    document.getElementById('newOrderAmount').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
+    document.getElementById('newOrderCost').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
+
+    // 默认日期为今天
+    document.getElementById('newOrderDate').value = getTodayStr();
+
+    // ==================== 导入导出 ====================
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const dataStr = JSON.stringify(appData, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `peach-workbench-backup-${getTodayStr()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast('数据已导出');
+    });
+
+    document.getElementById('importBtn').addEventListener('click', () => {
+      document.getElementById('file-import').click();
+    });
+
+    document.getElementById('file-import').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const imported = JSON.parse(ev.target.result);
+          if (imported.orders && Array.isArray(imported.orders)) {
+            appData = {
+              ideas: imported.ideas || appData.ideas,
+              materials: imported.materials || appData.materials,
+              orders: imported.orders,
+              favIdeas: imported.favIdeas || [],
+              lastUpdate: imported.lastUpdate || getTodayStr()
+            };
+            saveData(appData);
+            renderIdeas();
+            renderMaterials();
+            renderOrders();
+            toast('数据导入成功');
+          } else {
+            toast('文件格式不正确');
+          }
+        } catch (err) {
+          toast('导入失败：文件解析错误');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    // ==================== PWA 安装 ====================
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.classList.add('show');
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        toast('请在浏览器菜单中选择"添加到主屏幕"');
+        return;
+      }
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        toast('已添加到桌面 🍑');
+      }
+      deferredPrompt = null;
+      installBtn.classList.remove('show');
+    });
+
+    // 注册 Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('SW registered'))
+          .catch(err => console.log('SW registration failed', err));
+      });
+    }
+
+    // 头像上传（点击头像）
+    document.getElementById('userAvatar').addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const dataUrl = ev.target.result;
+          localStorage.setItem('peachWorkbenchAvatar', dataUrl);
+          document.getElementById('userAvatar').src = dataUrl;
+          toast('头像已更新');
+        };
+        reader.readAsDataURL(file);
+      };
+      input.click();
+    });
+
+    function loadAvatar() {
+      const saved = localStorage.getItem('peachWorkbenchAvatar');
+      if (saved) {
+        document.getElementById('userAvatar').src = saved;
+      }
+    }
+
+    // ==================== 初始化 ====================
+    loadAvatar();
+    renderIdeas();
+    renderMaterials();
+    renderOrders();
+
+    // 每天早上8点检查更新（简单轮询）
+    setInterval(() => {
+      const now = new Date();
+      if (now.getHours() === 8 && now.getMinutes() === 0) {
+        checkDailyUpdate();
+        // 触发一次"新灵感"toast
+        toast('🍑 早上好！今日灵感已更新');
+      }
+    }, 60000);
+  </script>
+</body>
+</html>
