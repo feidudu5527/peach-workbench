@@ -435,6 +435,218 @@
       box-shadow: 0 4px 12px rgba(249, 123, 109, 0.25);
     }
 
+    /* 首页 Hero */
+    .hero-banner {
+      background: var(--peach-gradient);
+      border-radius: 24px;
+      padding: 36px 28px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      box-shadow: 0 8px 30px rgba(249, 123, 109, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: "";
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 160px;
+      height: 160px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+    }
+
+    .hero-peach-art {
+      flex-shrink: 0;
+      width: 120px;
+      height: 120px;
+      position: relative;
+      z-index: 1;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.15));
+      animation: floatPeach 4s ease-in-out infinite;
+    }
+
+    @keyframes floatPeach {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-8px) rotate(2deg); }
+    }
+
+    .hero-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-text {
+      flex: 1;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 30px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      letter-spacing: 1px;
+    }
+
+    .hero-subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.92);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    .hero-date {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    /* 桃谐音三宫格 */
+    .punn-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .punn-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px 18px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--peach-100);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .punn-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--peach-gradient);
+      opacity: 0.7;
+    }
+
+    .punn-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .punn-emoji {
+      font-size: 38px;
+      margin-bottom: 10px;
+    }
+
+    .punn-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--peach-900);
+      margin-bottom: 6px;
+    }
+
+    .punn-desc {
+      font-size: 13px;
+      color: #8d5e58;
+      line-height: 1.5;
+    }
+
+    .punn-arrow {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 24px;
+      color: var(--peach-300);
+      font-weight: 300;
+      transition: all 0.2s;
+    }
+
+    .punn-card:hover .punn-arrow {
+      color: var(--peach-500);
+      transform: translateY(-50%) translateX(4px);
+    }
+
+    /* 桃言桃语 */
+    .quote-card {
+      text-align: center;
+      position: relative;
+      background: linear-gradient(135deg, #fff8f6 0%, #fff0eb 100%);
+    }
+
+    .quote-mark {
+      font-size: 56px;
+      color: var(--peach-300);
+      font-family: Georgia, serif;
+      line-height: 0.5;
+      margin-bottom: 8px;
+    }
+
+    .quote-text {
+      font-size: 18px;
+      color: var(--peach-800);
+      font-weight: 600;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .quote-from {
+      font-size: 12px;
+      color: var(--peach-500);
+    }
+
+    @media (max-width: 768px) {
+      .hero-banner {
+        flex-direction: column;
+        text-align: center;
+        padding: 28px 20px;
+      }
+      .hero-peach-art {
+        width: 100px;
+        height: 100px;
+      }
+      .hero-title {
+        font-size: 24px;
+      }
+      .punn-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .punn-card {
+        display: flex;
+        align-items: center;
+        text-align: left;
+        gap: 14px;
+        padding: 16px 18px;
+      }
+      .punn-emoji {
+        font-size: 32px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+      }
+      .punn-title {
+        font-size: 16px;
+        margin-bottom: 2px;
+      }
+      .punn-arrow {
+        right: 16px;
+      }
+    }
+
     /* 灵感卡片 */
     .idea-grid {
       display: grid;
@@ -966,7 +1178,11 @@
         </div>
       </div>
       <nav class="nav-menu">
-        <div class="nav-item active" data-page="ideas">
+        <div class="nav-item active" data-page="home">
+          <span class="nav-icon">🏠</span>
+          <span>首页</span>
+        </div>
+        <div class="nav-item" data-page="ideas">
           <span class="nav-icon">✨</span>
           <span>爆款灵感</span>
           <span class="nav-badge" id="ideasBadge">10</span>
@@ -1000,7 +1216,7 @@
             <span></span>
             <span></span>
           </div>
-          <h1 class="page-title" id="pageTitle">爆款灵感</h1>
+          <h1 class="page-title" id="pageTitle">🍑你喜欢</h1>
         </div>
         <div class="top-actions">
           <button class="icon-btn" id="importBtn" title="导入数据">📥</button>
@@ -1010,8 +1226,104 @@
       </header>
 
       <div class="content-area">
+        <!-- 首页 -->
+        <section class="page active" id="page-home">
+          <!-- 主视觉 Hero -->
+          <div class="hero-banner">
+            <div class="hero-peach-art">
+              <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="hero-svg">
+                <defs>
+                  <radialGradient id="peachBody" cx="38%" cy="35%" r="70%">
+                    <stop offset="0%" stop-color="#ffd6a8"/>
+                    <stop offset="45%" stop-color="#ffb88c"/>
+                    <stop offset="80%" stop-color="#f9896a"/>
+                    <stop offset="100%" stop-color="#e96a52"/>
+                  </radialGradient>
+                  <linearGradient id="leafGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#9bcc7a"/>
+                    <stop offset="100%" stop-color="#5fa83f"/>
+                  </linearGradient>
+                </defs>
+                <!-- 桃子主体 -->
+                <ellipse cx="100" cy="112" rx="62" ry="58" fill="url(#peachBody)"/>
+                <!-- 桃子凹槽 -->
+                <path d="M100 58 Q96 112 100 168" stroke="#d97a5c" stroke-width="3" fill="none" opacity="0.55"/>
+                <!-- 高光 -->
+                <ellipse cx="78" cy="90" rx="16" ry="22" fill="#fff3e0" opacity="0.45"/>
+                <!-- 叶子 -->
+                <path d="M100 56 Q128 38 150 52 Q132 64 116 60 Z" fill="url(#leafGrad)"/>
+                <path d="M100 56 Q140 44 148 52" stroke="#4a8f30" stroke-width="1.5" fill="none" opacity="0.7"/>
+                <!-- 茎 -->
+                <path d="M100 56 Q102 46 100 40" stroke="#7a5a3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="hero-text">
+              <div class="hero-title">「桃」你喜欢</div>
+              <div class="hero-subtitle">每一颗黄金蟠桃 · 都值得一个好故事</div>
+              <div class="hero-date" id="heroDate"></div>
+            </div>
+          </div>
+
+          <!-- 桃谐音三宫格 -->
+          <div class="punn-grid">
+            <div class="punn-card" onclick="switchPage('ideas')">
+              <div class="punn-emoji">✨</div>
+              <div class="punn-title">「桃」出爆款</div>
+              <div class="punn-desc">全网爆款脚本文案灵感</div>
+              <div class="punn-arrow">›</div>
+            </div>
+            <div class="punn-card" onclick="switchPage('materials')">
+              <div class="punn-emoji">🎬</div>
+              <div class="punn-title">「桃」故鼎新</div>
+              <div class="punn-desc">每日更新可二创视频素材</div>
+              <div class="punn-arrow">›</div>
+            </div>
+            <div class="punn-card" onclick="switchPage('orders')">
+              <div class="punn-emoji">📦</div>
+              <div class="punn-title">「桃」李满门</div>
+              <div class="punn-desc">接单发货 · 利润自动汇总</div>
+              <div class="punn-arrow">›</div>
+            </div>
+          </div>
+
+          <!-- 今日概览 -->
+          <div class="card">
+            <div class="card-title">📊 今日概览</div>
+            <div class="card-desc">你的黄金蟠桃事业一览</div>
+            <div class="stats-grid" style="margin-bottom:0;">
+              <div class="stat-card">
+                <div class="stat-label">今日卖出</div>
+                <div class="stat-value" id="homeRevenue">¥0</div>
+                <div class="stat-note">销售金额累计</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">今日利润</div>
+                <div class="stat-value" id="homeProfit">¥0</div>
+                <div class="stat-note">卖出 - 成本</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">待发货</div>
+                <div class="stat-value" id="homePending">0</div>
+                <div class="stat-note">未完成订单</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">灵感库</div>
+                <div class="stat-value" id="homeIdeas">0</div>
+                <div class="stat-note">条爆款脚本</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 桃言桃语 -->
+          <div class="card quote-card">
+            <div class="quote-mark">“</div>
+            <div class="quote-text" id="dailyQuote">桃之夭夭，灼灼其华。</div>
+            <div class="quote-from">—— 桃言桃语 · 每日一句</div>
+          </div>
+        </section>
+
         <!-- 页面1：爆款灵感 -->
-        <section class="page active" id="page-ideas">
+        <section class="page" id="page-ideas">
           <div class="stats-grid">
             <div class="stat-card">
               <div class="stat-label">今日灵感</div>
@@ -1116,10 +1428,11 @@
 
           <div class="card">
             <div class="card-title">📝 添加新订单</div>
-            <div class="card-desc">输入地址、卖出金额、成本金额，系统会自动按天汇总统计</div>
+            <div class="card-desc">输入地址、重量、卖出金额、成本金额，系统会自动按天汇总统计</div>
             <div class="add-row-bar">
               <input type="date" id="newOrderDate" class="date-input">
               <input type="text" id="newOrderAddress" placeholder="收货地址 / 客户信息" style="flex:1;min-width:140px;">
+              <input type="number" id="newOrderWeight" placeholder="重量(斤)" class="number-input" min="0" step="0.1">
               <input type="number" id="newOrderAmount" placeholder="卖出金额" class="number-input" min="0" step="0.01">
               <input type="number" id="newOrderCost" placeholder="成本金额" class="number-input" min="0" step="0.01">
               <button class="btn btn-primary" id="addOrderBtn">➕ 添加订单</button>
@@ -1136,6 +1449,7 @@
                     <th class="checkbox-cell">发货</th>
                     <th>日期</th>
                     <th>地址 / 客户</th>
+                    <th>重量(斤)</th>
                     <th>卖出金额</th>
                     <th>成本金额</th>
                     <th>利润</th>
@@ -1388,6 +1702,7 @@
 
     // ==================== 页面切换 ====================
     const pageTitles = {
+      home: '🍑你喜欢',
       ideas: '爆款灵感',
       materials: '二创素材',
       orders: '接单发货'
@@ -1402,6 +1717,7 @@
       document.getElementById('overlay').classList.remove('show');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       if (page === 'orders') renderOrders();
+      if (page === 'home') renderHome();
     }
 
     document.querySelectorAll('.nav-item').forEach(el => {
@@ -1417,6 +1733,41 @@
       document.getElementById('sidebar').classList.remove('open');
       document.getElementById('overlay').classList.remove('show');
     });
+
+    // ==================== 首页 ====================
+    const PEACH_QUOTES = [
+      '桃之夭夭，灼灼其华。',
+      '「桃」你喜欢，是我最大的心愿。',
+      '人间四月芳菲尽，山寺桃花始盛开。',
+      '桃李不言，下自成蹊。',
+      '一颗黄金蟠桃，甜在嘴里，暖在心头。',
+      '「桃」出爆款，「桃」故鼎新，「桃」李满门。',
+      '投桃报李，以诚相待。',
+      '桃红复含宿雨，柳绿更带朝烟。'
+    ];
+
+    function renderHome() {
+      const today = getTodayStr();
+      const todayOrders = appData.orders.filter(o => o.date === today);
+      const todayRevenue = todayOrders.reduce((s, o) => s + (parseFloat(o.amount) || 0), 0);
+      const todayCost = todayOrders.reduce((s, o) => s + (parseFloat(o.cost) || 0), 0);
+      const pending = appData.orders.filter(o => !o.completed).length;
+
+      document.getElementById('homeRevenue').textContent = formatMoney(todayRevenue);
+      document.getElementById('homeProfit').textContent = formatMoney(todayRevenue - todayCost);
+      document.getElementById('homePending').textContent = pending;
+      document.getElementById('homeIdeas').textContent = appData.ideas.length;
+
+      // 日期显示
+      const d = new Date();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const dateStr = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日 · ${weekDays[d.getDay()]}`;
+      document.getElementById('heroDate').textContent = dateStr;
+
+      // 每日一句（按日期取固定一句）
+      const dayIdx = Math.floor(Date.now() / 86400000) % PEACH_QUOTES.length;
+      document.getElementById('dailyQuote').textContent = PEACH_QUOTES[dayIdx];
+    }
 
     // ==================== 模块1：爆款灵感 ====================
     function renderIdeas() {
@@ -1642,6 +1993,7 @@
           </td>
           <td><input type="date" class="input-cell date-input" value="${order.date}" onchange="updateOrder(${originalIdx}, 'date', this.value)"></td>
           <td><input type="text" class="input-cell address-input" value="${escapeHtml(order.address || '')}" placeholder="地址/客户" onchange="updateOrder(${originalIdx}, 'address', this.value)"></td>
+          <td><input type="number" class="input-cell number-input" value="${order.weight ?? ''}" placeholder="0" min="0" step="0.1" onchange="updateOrder(${originalIdx}, 'weight', this.value)"></td>
           <td><input type="number" class="input-cell number-input price-cell" value="${order.amount}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'amount', this.value)"></td>
           <td><input type="number" class="input-cell number-input" value="${order.cost}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'cost', this.value)"></td>
           <td class="price-cell">${formatMoney(profit)}</td>
@@ -1675,6 +2027,7 @@
     function addOrder() {
       const date = document.getElementById('newOrderDate').value || getTodayStr();
       const address = document.getElementById('newOrderAddress').value.trim();
+      const weight = parseFloat(document.getElementById('newOrderWeight').value) || 0;
       const amount = parseFloat(document.getElementById('newOrderAmount').value) || 0;
       const cost = parseFloat(document.getElementById('newOrderCost').value) || 0;
 
@@ -1687,6 +2040,7 @@
         id: Date.now(),
         date,
         address,
+        weight,
         amount,
         cost,
         completed: false,
@@ -1695,6 +2049,7 @@
       saveData(appData);
 
       document.getElementById('newOrderAddress').value = '';
+      document.getElementById('newOrderWeight').value = '';
       document.getElementById('newOrderAmount').value = '';
       document.getElementById('newOrderCost').value = '';
       renderOrders();
@@ -1703,6 +2058,7 @@
 
     document.getElementById('addOrderBtn').addEventListener('click', addOrder);
     document.getElementById('newOrderAddress').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
+    document.getElementById('newOrderWeight').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
     document.getElementById('newOrderAmount').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
     document.getElementById('newOrderCost').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
 
@@ -1821,6 +2177,7 @@
 
     // ==================== 初始化 ====================
     loadAvatar();
+    renderHome();
     renderIdeas();
     renderMaterials();
     renderOrders();
