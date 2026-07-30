@@ -2139,12 +2139,34 @@
       installBtn.classList.remove('show');
     });
 
-    // 注册 Service Worker
+    // 注册 Service Worker（带自动更新机制）
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
-          .then(() => console.log('SW registered'))
+          .then((reg) => {
+            // 检测到新 Service Worker 等待激活时，强制接管并刷新页面
+            reg.addEventListener('updatefound', () => {
+              const newWorker = reg.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // 新版本已安装，强制激活并刷新
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                  }
+                });
+              }
+            });
+          })
           .catch(err => console.log('SW registration failed', err));
+
+        // 当控制页面的 Service Worker 切换时，自动刷新一次
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) {
+            refreshing = true;
+            window.location.reload();
+          }
+        });
       });
     }
 
