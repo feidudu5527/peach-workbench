@@ -787,14 +787,35 @@
     /* 表格 */
     .orders-table-wrap {
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
       border-radius: var(--radius);
       box-shadow: var(--card-shadow);
       background: white;
       margin-bottom: 20px;
+      position: relative;
+    }
+
+    /* 滑动提示阴影 */
+    .orders-table-wrap::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 24px;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9));
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.2s;
+    }
+
+    .orders-table-wrap.scrolled-right::after {
+      opacity: 0;
     }
 
     .orders-table {
       width: 100%;
+      min-width: 720px;
       border-collapse: collapse;
       font-size: 14px;
     }
@@ -1441,7 +1462,7 @@
 
           <div class="card">
             <div class="card-title">📋 订单记录</div>
-            <div class="card-desc">勾选代表已发货，自动从今日待办中移除；每天独立累计</div>
+            <div class="card-desc">勾选代表已发货，自动从今日待办中移除；每天独立累计 · 👆表格可左右滑动查看全部列</div>
             <div class="orders-table-wrap">
               <table class="orders-table">
                 <thead>
@@ -2203,6 +2224,19 @@
     renderIdeas();
     renderMaterials();
     renderOrders();
+
+    // 订单表格横向滚动提示
+    const orderWrap = document.querySelector('.orders-table-wrap');
+    if (orderWrap) {
+      const updateScrollHint = () => {
+        const atEnd = orderWrap.scrollLeft + orderWrap.clientWidth >= orderWrap.scrollWidth - 2;
+        orderWrap.classList.toggle('scrolled-right', atEnd);
+      };
+      orderWrap.addEventListener('scroll', updateScrollHint, { passive: true });
+      updateScrollHint();
+      // 窗口尺寸变化时重新计算
+      window.addEventListener('resize', updateScrollHint);
+    }
 
     // 每天早上8点检查更新（简单轮询）
     setInterval(() => {
