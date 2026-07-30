@@ -20,7 +20,9 @@
 
 ## 使用方式
 
-1. 用浏览器打开 GitHub Pages 地址
+**永久访问地址**：https://feidudu5527.github.io/peach-workbench/
+
+1. 用浏览器打开上方 GitHub Pages 地址
 2. 点击浏览器菜单「添加到主屏幕」或应用内的「添加到桌面」按钮
 3. 开始记录订单、查看灵感和素材
 
