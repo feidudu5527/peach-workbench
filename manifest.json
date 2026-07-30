@@ -4,6 +4,7 @@
   "description": "黄金蟠桃个人工作台：爆款灵感、二创素材、接单发货记录",
   "start_url": "/peach-workbench/",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "background_color": "#fff0eb",
   "theme_color": "#ff9a8b",
   "orientation": "portrait-primary",
@@ -37,5 +38,13 @@
       "purpose": "maskable"
     }
   ],
-  "categories": ["business", "productivity", "food"]
+  "categories": ["business", "productivity", "food"],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ]
 }
