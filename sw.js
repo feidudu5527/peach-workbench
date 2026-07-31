@@ -1,4 +1,4 @@
-const CACHE_NAME = 'peach-workbench-v3';
+const CACHE_NAME = 'peach-workbench-v4';
 const ASSETS_TO_CACHE = [
   '/peach-workbench/',
   '/peach-workbench/index.html',
