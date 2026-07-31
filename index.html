@@ -928,6 +928,30 @@
       color: #d64545;
     }
 
+    /* 智能粘贴框 */
+    .paste-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .paste-box input {
+      flex: 1;
+      padding: 12px 14px;
+      border: 2px dashed var(--peach-300);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+      background: var(--peach-50);
+    }
+
+    .paste-box input:focus {
+      border-style: solid;
+      border-color: var(--peach-400);
+      box-shadow: 0 0 0 4px rgba(255, 154, 139, 0.12);
+    }
+
     .add-row-bar {
       display: flex;
       gap: 12px;
@@ -936,16 +960,18 @@
       flex-wrap: wrap;
     }
 
-    .add-row-bar input {
+    .add-row-bar input, .add-row-bar select {
       padding: 12px 14px;
       border: 2px solid var(--peach-200);
       border-radius: var(--radius-sm);
       font-size: 14px;
       outline: none;
       transition: all 0.2s;
+      background: white;
+      color: #4a2c2a;
     }
 
-    .add-row-bar input:focus {
+    .add-row-bar input:focus, .add-row-bar select:focus {
       border-color: var(--peach-400);
       box-shadow: 0 0 0 4px rgba(255, 154, 139, 0.12);
     }
@@ -1431,46 +1457,60 @@
               <div class="stat-note">今日累计销售金额</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">今日成本</div>
-              <div class="stat-value" id="todayCost">¥0</div>
-              <div class="stat-note">今日累计成本金额</div>
-            </div>
-            <div class="stat-card">
               <div class="stat-label">今日利润</div>
               <div class="stat-value" id="todayProfit">¥0</div>
-              <div class="stat-note">今日净利润</div>
+              <div class="stat-note">今日净利润累计</div>
             </div>
             <div class="stat-card">
-              <div class="stat-label">未完成</div>
-              <div class="stat-value" id="pendingCount">0</div>
-              <div class="stat-note">待发货订单</div>
+              <div class="stat-label">今日箱数</div>
+              <div class="stat-value" id="todayBoxes">0</div>
+              <div class="stat-note">5斤<span id="todayFive">0</span>箱 · 10斤<span id="todayTen">0</span>箱</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">今日斤数</div>
+              <div class="stat-value" id="todayJin">0</div>
+              <div class="stat-note">总卖出斤数累计</div>
             </div>
           </div>
 
           <div class="card">
             <div class="card-title">📝 添加新订单</div>
-            <div class="card-desc">输入地址、重量、卖出金额、成本金额，系统会自动按天汇总统计</div>
+            <div class="card-desc">填写信息后添加，系统自动按天汇总金额、利润、箱数和斤数</div>
+            <!-- 智能粘贴框 -->
+            <div class="paste-box">
+              <input type="text" id="pasteInput" placeholder="📋 粘贴整段信息（姓名 电话 地址），自动识别拆分到下方">
+              <button class="btn btn-secondary btn-sm" id="pasteParseBtn">智能识别</button>
+            </div>
             <div class="add-row-bar">
               <input type="date" id="newOrderDate" class="date-input">
-              <input type="text" id="newOrderAddress" placeholder="收货地址 / 客户信息" style="flex:1;min-width:140px;">
-              <input type="number" id="newOrderWeight" placeholder="重量(斤)" class="number-input" min="0" step="0.1">
+              <input type="text" id="newOrderName" placeholder="姓名" style="min-width:80px;">
+              <input type="text" id="newOrderPhone" placeholder="电话" style="min-width:110px;">
+              <input type="text" id="newOrderAddress" placeholder="收货地址" style="flex:1;min-width:140px;">
+              <select id="newOrderWeight" class="number-input">
+                <option value="5">5斤</option>
+                <option value="10">10斤</option>
+              </select>
+              <input type="number" id="newOrderQty" placeholder="数量(箱)" class="number-input" min="1" step="1" value="1">
               <input type="number" id="newOrderAmount" placeholder="卖出金额" class="number-input" min="0" step="0.01">
               <input type="number" id="newOrderCost" placeholder="成本金额" class="number-input" min="0" step="0.01">
-              <button class="btn btn-primary" id="addOrderBtn">➕ 添加订单</button>
+              <button class="btn btn-primary" id="addOrderBtn">➕ 添加</button>
             </div>
           </div>
 
           <div class="card">
             <div class="card-title">📋 订单记录</div>
-            <div class="card-desc">勾选代表已发货，自动从今日待办中移除；每天独立累计 · 👆表格可左右滑动查看全部列</div>
-            <div class="orders-table-wrap">
+            <div class="card-desc">勾选代表已发货，自动从待发货中移除 · 每天独立累计 · 👆表格可左右滑动查看全部列</div>
+            <div class="orders-table-wrap" id="ordersTableWrap">
               <table class="orders-table">
                 <thead>
                   <tr>
                     <th class="checkbox-cell">发货</th>
                     <th>日期</th>
-                    <th>地址 / 客户</th>
-                    <th>重量(斤)</th>
+                    <th>姓名</th>
+                    <th>电话</th>
+                    <th>地址</th>
+                    <th>规格</th>
+                    <th>数量(箱)</th>
                     <th>卖出金额</th>
                     <th>成本金额</th>
                     <th>利润</th>
@@ -1484,6 +1524,34 @@
               <div class="empty-state-icon">📦</div>
               <div class="empty-state-title">还没有订单</div>
               <div>添加第一笔接单发货记录，开始赚钱吧 🍑</div>
+            </div>
+          </div>
+
+          <!-- 待发货订单（可滑动） -->
+          <div class="card">
+            <div class="card-title">🚚 待发货订单</div>
+            <div class="card-desc">未勾选发货的订单 · 👆可左右滑动查看</div>
+            <div class="orders-table-wrap" id="pendingTableWrap">
+              <table class="orders-table">
+                <thead>
+                  <tr>
+                    <th>日期</th>
+                    <th>姓名</th>
+                    <th>电话</th>
+                    <th>地址</th>
+                    <th>规格</th>
+                    <th>数量(箱)</th>
+                    <th>金额</th>
+                    <th>发货</th>
+                  </tr>
+                </thead>
+                <tbody id="pendingBody"></tbody>
+              </table>
+            </div>
+            <div class="empty-state" id="pendingEmpty" style="display:none;">
+              <div class="empty-state-icon">✅</div>
+              <div class="empty-state-title">没有待发货订单</div>
+              <div>所有订单都已发货，太棒了 🍑</div>
             </div>
           </div>
         </section>
@@ -1967,9 +2035,52 @@
       return (parseFloat(order.amount) || 0) - (parseFloat(order.cost) || 0);
     }
 
-    function getTodayOrders() {
-      const today = getTodayStr();
-      return appData.orders.filter(o => o.date === today && !o.completed);
+    // 订单数据迁移：把旧格式（address/weight）迁移到新格式（name/phone/address/weight/qty）
+    function migrateOrders(orders) {
+      return orders.map(o => {
+        if (o.name !== undefined) return o; // 已是新格式
+        // 旧格式迁移
+        let name = '', phone = '', address = o.address || '';
+        // 尝试从 address 里拆出电话
+        const phoneMatch = String(address).match(/1[3-9]\d{9}/);
+        if (phoneMatch) {
+          phone = phoneMatch[0];
+          address = String(address).replace(phone, '').replace(/^\s*[,，\s]+/, '').replace(/[,，\s]+$/, '').trim();
+          // 拆出姓名（电话前或后的第一段）
+          const parts = address.split(/[,，\s]+/).filter(Boolean);
+          if (parts.length > 0) {
+            name = parts[0];
+            address = parts.slice(1).join(' ');
+          }
+        } else {
+          const parts = String(address).split(/[,，\s]+/).filter(Boolean);
+          if (parts.length >= 2) {
+            name = parts[0];
+            address = parts.slice(1).join(' ');
+          }
+        }
+        // 旧 weight 是数字，映射成规格 5 或 10
+        let weight = 5;
+        if (o.weight) {
+          const w = parseFloat(o.weight);
+          weight = (w >= 10) ? 10 : 5;
+        }
+        return Object.assign({}, o, {
+          name: name || o.name || '',
+          phone: phone || o.phone || '',
+          address: address,
+          weight: weight,
+          qty: o.qty !== undefined ? o.qty : 1,
+          amount: o.amount || 0,
+          cost: o.cost || 0
+        });
+      });
+    }
+
+    // 首次加载时迁移旧数据
+    if (appData.orders && appData.orders.length > 0 && appData.orders[0].name === undefined) {
+      appData.orders = migrateOrders(appData.orders);
+      saveData(appData);
     }
 
     function renderOrders() {
@@ -1978,18 +2089,26 @@
       const todayRevenue = todayOrders.reduce((sum, o) => sum + (parseFloat(o.amount) || 0), 0);
       const todayCost = todayOrders.reduce((sum, o) => sum + (parseFloat(o.cost) || 0), 0);
       const todayProfit = todayRevenue - todayCost;
-      const pending = appData.orders.filter(o => !o.completed).length;
+      const pendingOrders = appData.orders.filter(o => !o.completed);
+
+      // 箱数统计
+      const todayFive = todayOrders.filter(o => Number(o.weight) === 5).reduce((s, o) => s + (parseInt(o.qty) || 1), 0);
+      const todayTen = todayOrders.filter(o => Number(o.weight) === 10).reduce((s, o) => s + (parseInt(o.qty) || 1), 0);
+      const todayBoxes = todayFive + todayTen;
+      const todayJin = todayOrders.reduce((s, o) => s + (Number(o.weight) || 5) * (parseInt(o.qty) || 1), 0);
 
       document.getElementById('todayRevenue').textContent = formatMoney(todayRevenue);
-      document.getElementById('todayCost').textContent = formatMoney(todayCost);
       document.getElementById('todayProfit').textContent = formatMoney(todayProfit);
-      document.getElementById('pendingCount').textContent = pending;
-      document.getElementById('ordersBadge').textContent = pending;
+      document.getElementById('todayBoxes').textContent = todayBoxes;
+      document.getElementById('todayFive').textContent = todayFive;
+      document.getElementById('todayTen').textContent = todayTen;
+      document.getElementById('todayJin').textContent = todayJin;
+      document.getElementById('ordersBadge').textContent = pendingOrders.length;
 
+      // === 订单记录表 ===
       const tbody = document.getElementById('ordersBody');
       const emptyEl = document.getElementById('ordersEmpty');
 
-      // 按日期倒序，未完成的在前面
       const sorted = [...appData.orders].sort((a, b) => {
         if (a.completed !== b.completed) return a.completed ? 1 : -1;
         return b.date.localeCompare(a.date);
@@ -1998,30 +2117,64 @@
       if (sorted.length === 0) {
         tbody.innerHTML = '';
         emptyEl.style.display = 'block';
-        return;
+      } else {
+        emptyEl.style.display = 'none';
+        tbody.innerHTML = sorted.map((order) => {
+          const originalIdx = appData.orders.indexOf(order);
+          const profit = calcOrderProfit(order);
+          const w = Number(order.weight) || 5;
+          return `
+          <tr class="${order.completed ? 'completed' : ''}" data-idx="${originalIdx}">
+            <td class="checkbox-cell">
+              <span class="custom-checkbox ${order.completed ? 'checked' : ''}" onclick="toggleOrderComplete(${originalIdx})">
+                ${order.completed ? '✓' : ''}
+              </span>
+            </td>
+            <td><input type="date" class="input-cell date-input" value="${order.date}" onchange="updateOrder(${originalIdx}, 'date', this.value)"></td>
+            <td><input type="text" class="input-cell" style="min-width:70px;" value="${escapeHtml(order.name || '')}" placeholder="姓名" onchange="updateOrder(${originalIdx}, 'name', this.value)"></td>
+            <td><input type="text" class="input-cell" style="min-width:110px;" value="${escapeHtml(order.phone || '')}" placeholder="电话" onchange="updateOrder(${originalIdx}, 'phone', this.value)"></td>
+            <td><input type="text" class="input-cell address-input" value="${escapeHtml(order.address || '')}" placeholder="地址" onchange="updateOrder(${originalIdx}, 'address', this.value)"></td>
+            <td><select class="input-cell" style="min-width:70px;" onchange="updateOrder(${originalIdx}, 'weight', this.value)">
+              <option value="5" ${w===5?'selected':''}>5斤</option>
+              <option value="10" ${w===10?'selected':''}>10斤</option>
+            </select></td>
+            <td><input type="number" class="input-cell number-input" style="min-width:60px;" value="${order.qty ?? 1}" placeholder="1" min="1" step="1" onchange="updateOrder(${originalIdx}, 'qty', this.value)"></td>
+            <td><input type="number" class="input-cell number-input price-cell" value="${order.amount}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'amount', this.value)"></td>
+            <td><input type="number" class="input-cell number-input" value="${order.cost}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'cost', this.value)"></td>
+            <td class="price-cell">${formatMoney(profit)}</td>
+            <td><button class="delete-row-btn" onclick="deleteOrder(${originalIdx})" title="删除">🗑</button></td>
+          </tr>
+          `;
+        }).join('');
       }
-      emptyEl.style.display = 'none';
 
-      tbody.innerHTML = sorted.map((order, idx) => {
-        const originalIdx = appData.orders.indexOf(order);
-        const profit = calcOrderProfit(order);
-        return `
-        <tr class="${order.completed ? 'completed' : ''}" data-idx="${originalIdx}">
-          <td class="checkbox-cell">
-            <span class="custom-checkbox ${order.completed ? 'checked' : ''}" onclick="toggleOrderComplete(${originalIdx})">
-              ${order.completed ? '✓' : ''}
-            </span>
-          </td>
-          <td><input type="date" class="input-cell date-input" value="${order.date}" onchange="updateOrder(${originalIdx}, 'date', this.value)"></td>
-          <td><input type="text" class="input-cell address-input" value="${escapeHtml(order.address || '')}" placeholder="地址/客户" onchange="updateOrder(${originalIdx}, 'address', this.value)"></td>
-          <td><input type="number" class="input-cell number-input" value="${order.weight ?? ''}" placeholder="0" min="0" step="0.1" onchange="updateOrder(${originalIdx}, 'weight', this.value)"></td>
-          <td><input type="number" class="input-cell number-input price-cell" value="${order.amount}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'amount', this.value)"></td>
-          <td><input type="number" class="input-cell number-input" value="${order.cost}" placeholder="0.00" min="0" step="0.01" onchange="updateOrder(${originalIdx}, 'cost', this.value)"></td>
-          <td class="price-cell">${formatMoney(profit)}</td>
-          <td><button class="delete-row-btn" onclick="deleteOrder(${originalIdx})" title="删除">🗑</button></td>
-        </tr>
-      `;
-      }).join('');
+      // === 待发货订单表 ===
+      const pendingBody = document.getElementById('pendingBody');
+      const pendingEmpty = document.getElementById('pendingEmpty');
+      if (pendingOrders.length === 0) {
+        pendingBody.innerHTML = '';
+        pendingEmpty.style.display = 'block';
+      } else {
+        pendingEmpty.style.display = 'none';
+        pendingBody.innerHTML = pendingOrders.map((order) => {
+          const originalIdx = appData.orders.indexOf(order);
+          const w = Number(order.weight) || 5;
+          return `
+          <tr data-idx="${originalIdx}">
+            <td>${order.date}</td>
+            <td>${escapeHtml(order.name || '')}</td>
+            <td>${escapeHtml(order.phone || '')}</td>
+            <td style="max-width:200px;">${escapeHtml(order.address || '')}</td>
+            <td>${w}斤</td>
+            <td>${order.qty || 1}</td>
+            <td class="price-cell">${formatMoney(order.amount)}</td>
+            <td class="checkbox-cell">
+              <span class="custom-checkbox" onclick="toggleOrderComplete(${originalIdx})"></span>
+            </td>
+          </tr>
+          `;
+        }).join('');
+      }
     }
 
     window.toggleOrderComplete = function(idx) {
@@ -2045,23 +2198,90 @@
       toast('订单已删除');
     };
 
+    // 智能识别：从粘贴文本中拆分姓名/电话/地址
+    function parsePasteText(text) {
+      if (!text || !text.trim()) return null;
+      text = text.trim();
+      let phone = '';
+      let name = '';
+      let address = '';
+
+      // 提取手机号
+      const phoneMatch = text.match(/1[3-9]\d{9}/);
+      if (phoneMatch) {
+        phone = phoneMatch[0];
+        text = text.replace(phone, ' ').trim();
+      }
+
+      // 按常见分隔符拆分
+      const parts = text.split(/[,，;；\s\t\n\r、]+/).filter(Boolean);
+
+      if (parts.length >= 2) {
+        // 第一段通常是姓名（2-4个中文字符或英文名）
+        name = parts[0];
+        address = parts.slice(1).join(' ');
+      } else if (parts.length === 1) {
+        // 只有一段，判断是姓名还是地址
+        if (parts[0].length <= 4 && /^[\u4e00-\u9fa5a-zA-Z·]+$/.test(parts[0])) {
+          name = parts[0];
+        } else {
+          address = parts[0];
+        }
+      }
+
+      // 如果没提取到电话，从剩余文本再找一次
+      if (!phone) {
+        const pm = address.match(/1[3-9]\d{9}/);
+        if (pm) {
+          phone = pm[0];
+          address = address.replace(phone, '').trim();
+        }
+      }
+
+      return { name, phone, address };
+    }
+
+    document.getElementById('pasteParseBtn').addEventListener('click', () => {
+      const text = document.getElementById('pasteInput').value;
+      const result = parsePasteText(text);
+      if (!result) {
+        toast('请先粘贴信息');
+        return;
+      }
+      document.getElementById('newOrderName').value = result.name;
+      document.getElementById('newOrderPhone').value = result.phone;
+      document.getElementById('newOrderAddress').value = result.address;
+      document.getElementById('pasteInput').value = '';
+      toast('已识别：' + (result.name || '姓名') + ' / ' + (result.phone || '电话'));
+    });
+
+    document.getElementById('pasteInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') document.getElementById('pasteParseBtn').click();
+    });
+
     function addOrder() {
       const date = document.getElementById('newOrderDate').value || getTodayStr();
+      const name = document.getElementById('newOrderName').value.trim();
+      const phone = document.getElementById('newOrderPhone').value.trim();
       const address = document.getElementById('newOrderAddress').value.trim();
-      const weight = parseFloat(document.getElementById('newOrderWeight').value) || 0;
+      const weight = document.getElementById('newOrderWeight').value;
+      const qty = parseInt(document.getElementById('newOrderQty').value) || 1;
       const amount = parseFloat(document.getElementById('newOrderAmount').value) || 0;
       const cost = parseFloat(document.getElementById('newOrderCost').value) || 0;
 
-      if (!address) {
-        toast('请先填写地址或客户信息');
+      if (!name && !phone && !address) {
+        toast('请至少填写姓名、电话或地址');
         return;
       }
 
       appData.orders.unshift({
         id: Date.now(),
         date,
+        name,
+        phone,
         address,
-        weight,
+        weight: Number(weight),
+        qty,
         amount,
         cost,
         completed: false,
@@ -2069,8 +2289,10 @@
       });
       saveData(appData);
 
+      document.getElementById('newOrderName').value = '';
+      document.getElementById('newOrderPhone').value = '';
       document.getElementById('newOrderAddress').value = '';
-      document.getElementById('newOrderWeight').value = '';
+      document.getElementById('newOrderQty').value = '1';
       document.getElementById('newOrderAmount').value = '';
       document.getElementById('newOrderCost').value = '';
       renderOrders();
@@ -2078,10 +2300,10 @@
     }
 
     document.getElementById('addOrderBtn').addEventListener('click', addOrder);
-    document.getElementById('newOrderAddress').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
-    document.getElementById('newOrderWeight').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
-    document.getElementById('newOrderAmount').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
-    document.getElementById('newOrderCost').addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
+    ['newOrderName', 'newOrderPhone', 'newOrderAddress', 'newOrderQty', 'newOrderAmount', 'newOrderCost'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('keypress', e => { if (e.key === 'Enter') addOrder(); });
+    });
 
     // 默认日期为今天
     document.getElementById('newOrderDate').value = getTodayStr();
@@ -2225,18 +2447,16 @@
     renderMaterials();
     renderOrders();
 
-    // 订单表格横向滚动提示
-    const orderWrap = document.querySelector('.orders-table-wrap');
-    if (orderWrap) {
+    // 订单表格横向滚动提示（支持多个表格）
+    document.querySelectorAll('.orders-table-wrap').forEach(wrap => {
       const updateScrollHint = () => {
-        const atEnd = orderWrap.scrollLeft + orderWrap.clientWidth >= orderWrap.scrollWidth - 2;
-        orderWrap.classList.toggle('scrolled-right', atEnd);
+        const atEnd = wrap.scrollLeft + wrap.clientWidth >= wrap.scrollWidth - 2;
+        wrap.classList.toggle('scrolled-right', atEnd);
       };
-      orderWrap.addEventListener('scroll', updateScrollHint, { passive: true });
+      wrap.addEventListener('scroll', updateScrollHint, { passive: true });
       updateScrollHint();
-      // 窗口尺寸变化时重新计算
       window.addEventListener('resize', updateScrollHint);
-    }
+    });
 
     // 每天早上8点检查更新（简单轮询）
     setInterval(() => {
